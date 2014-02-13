@@ -4,8 +4,7 @@ To use it, modify the bash file example-btctxt and replace the arguments with yo
 
 The default file is:
 
-#!/bin/bash
-~/bin/btctxt/btctxt.py ~/bin/price username@gmail.com username password smtp.gmail.com 587 5551234567@vtext.com .1 180
+~/bin/btctxt/btctxt.py ~/bin/btctxt/price username@gmail.com username password smtp.gmail.com 587 5551234567@vtext.com .1 180
 
 Step 0: Point the bash file to your btctxt.py. Currently, it's pointing to the user's home directory bin.
 	
