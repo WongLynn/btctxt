@@ -1,2 +1,2 @@
 #!/bin/bash
-~/bin/btctxt/btctxt.py ~/bin/price username@gmail.com username password smtp.gmail.com 587 5551234567@vtext.com .01
+~/bin/btctxt/btctxt.py ~/bin/price username@gmail.com username password smtp.gmail.com 587 5551234567@vtext.com .05 180
