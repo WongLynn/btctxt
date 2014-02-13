@@ -44,10 +44,10 @@ def notify(last, path, from_address, user, pw, smtp, port, to_address):
 def sendEmail(last, from_address, user, pw, smtp, port, to_address):
         #Format email_content
         timestr = time.strftime("%H:%M", time.localtime())
-        email_content = "The price of BTC is currently " + str(last) + " as of " + timestr
+        email_content = "The price of BTC is currently " + str(last) + " as of " + timestr + " on Bitstamp."
         #Create msg
         msg = MIMEText(email_content)
-        msg['Subject'] = "BTC-Update"
+        msg['Subject'] = "BTCtxt"
         msg['To'] = to_address
         msg['From'] = from_address
         #start server
@@ -86,4 +86,4 @@ def checkLogExistence(path):
 
 while True:
         main(path, from_address, user, pw, smtp, port, to_address, ratio)
-        sleep(sleepTime)
+        time.sleep(sleepTime)
