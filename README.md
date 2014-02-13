@@ -1,14 +1,9 @@
 This python script may be used to monitor the price of bitcoin and send email alerts when the price has changed significantly.
 
-To use it, modify the bash file example-btctxt and replace the arguments with your appropriate values.
 
-The default file is:
+btctxt.py ~/var/btctxt/price username@gmail.com username password smtp.gmail.com 587 5551234567@vtext.com .1 180
 
-~/bin/btctxt/btctxt.py ~/bin/btctxt/price username@gmail.com username password smtp.gmail.com 587 5551234567@vtext.com .1 180
-
-Step 0: Point the bash file to your btctxt.py. Currently, it's pointing to the user's home directory bin.
-	
-Step 1: Set the first argument, "path", to the path to you'd like to keep your price log. The price log is a file that simply contains the last price that was notified to the user. In the example, this file is stored at ~/bin/price.
+Step 1: Set the first argument, "path", to the path to you'd like to keep your price log. The price log is a file that simply contains the last price that was notified to the user. In the example, this file is stored at ~/var/price.
 
 Step 2: Set the second argument, "from_address". This is simply your email address.
 
