@@ -68,6 +68,7 @@ section to your .conf file.
 
 > [Credentials]
 > user = myUsername
+>
 > pw = myPassword
 
 Just to be clear here: if you decide to go with option 3, 
