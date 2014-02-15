@@ -31,10 +31,10 @@ Calling BTCtxt
 11. The currency you want to monitor.
 
 > These values will be substituted into the string concatanation:
+>
 >     "http://bitcoinity.org/markets/" + exchange + "/" + currency.
 >
->     So, be sure to verify you are producing a valid URL using your provided arguments by visiting      bitcoinity beforehand.
-
+> So, be sure to verify you are producing a valid URL using your provided arguments by visiting bitcoinity beforehand.
 12. Choose whether you wanted to monitor the last bid price (by providing "buy" as your argument) or the last ask price (by providing "sell" as your argument).
 
 (Option 2) Partly from a config file/ partly from commandline
