@@ -29,12 +29,13 @@ Calling BTCtxt
 9. The amount of time (in seconds) BTCtxt should wait between checking the price. 180 implies 180 seconds between checks.
 10. The exchange you want to monitor (See 11 for example).
 11. The currency you want to monitor.
-
-> These values will be substituted into the string concatanation:
->
->     "http://bitcoinity.org/markets/" + exchange + "/" + currency.
->
-> So, be sure to verify you are producing a valid URL using your provided arguments by visiting bitcoinity beforehand.
+    
+    These values will be substituted into the string concatanation:
+    
+    "http://bitcoinity.org/markets/" + exchange + "/" + currency.
+    
+     So, be sure to verify you are producing a valid URL using your provided arguments by visiting bitcoinity beforehand.
+    
 12. Choose whether you wanted to monitor the last bid price (by providing "buy" as your argument) or the last ask price (by providing "sell" as your argument).
 
 (Option 2) Partly from a config file/ partly from commandline
