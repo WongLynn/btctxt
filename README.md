@@ -19,27 +19,20 @@ Calling BTCtxt
 
 ###Arguments
 1. Provide a path to a valid directory in which you'd like to store a blank file. If a file does not exist, BTCtxt will create a fill with value 1. This guarantees you'll receive a txt the first time BTCtxt successfully runs.
-
 2. The email address from which you'd like to send the sms message.
-
 3. Your email username.
-
 4. Your email password.
-
 5. Your SMTP server. For gmail, it's smtp.gmail.com
-
 6. Your SMTP server's port. For gmail, it's port 587.
-
 7. The email address you wish to send your alert to. For verizon it is [9digitnumber]@vtext.com
-
 8. The proportional change in price you'd wish to be notified at. 0.1 implies BTCtxt will view a 10% change in price as an alert worthy event.
-
 9. The amount of time (in seconds) BTCtxt should wait between checking the price. 180 implies 180 seconds between checks.
-
-10 and 11. Which exchange you want to monitor (10) and using which currency (11). These values will be substituted into the string concatanation:
-"http://bitcoinity.org/markets/" + exchange + "/" + currency.
-     So, be sure to verify you are producing a valid URL using your provided arguments by visiting      bitcoinity beforehand.
-
+10. The exchange you want to monitor (See 11 for example).
+11. The currency you want to monitor.
+> These values will be substituted into the string concatanation:
+>     "http://bitcoinity.org/markets/" + exchange + "/" + currency.
+>
+>     So, be sure to verify you are producing a valid URL using your provided arguments by visiting      bitcoinity beforehand.
 12. Choose whether you wanted to monitor the last bid price (by providing "buy" as your argument) or the last ask price (by providing "sell" as your argument).
 
 (Option 2) Partly from a config file/ partly from commandline
