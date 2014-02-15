@@ -1,6 +1,5 @@
-------------------------------------------------------
-------------------------BTCtxt------------------------
-------------------------------------------------------
+                        BTCtxt                        
+===================================================== 
 
 BTCtxt monitors the price of BTC by grabbing the 
 current price from bitcoinity and sending an email
@@ -9,9 +8,8 @@ cellphones have a corresponding email address, BTCtxt
 can submit an smtp message as an sms message to your
 phone.
 
-------------------------------------------------------
----------------------Dependencies---------------------
-------------------------------------------------------
+                     Dependencies                     
+======================================================
 
 The only nonstandard library used in this application
 is the BeautifulSoup module. In the next release, I'm
@@ -19,11 +17,12 @@ going to try to remove this dependency so that the
 entirity of this code is either a standard library or
 easily readable code. 
 
-------------------------------------------------------
---------------------Calling BTCtxt--------------------
-------------------------------------------------------
+
+                    Calling BTCtxt                    
+======================================================
 
 (Option 1) Fully from the commandline
+-----------------------------------------------------
 Example: 
 $ btctxt.py ~/path/to/price username@gmail.com user pw smtp.server.com port 5551234567@cell.com .1 180
 
@@ -71,6 +70,7 @@ Arg 12: Choose whether you wanted to monitor the last
         your argument).
 
 (Option 2) Partly from a config file/ partly from commandline
+-------------------------------------------------------------
 Example:
 $ btctxt.py ./btctxt.conf
 Username: myUsername
@@ -89,6 +89,7 @@ The rest of the information will either be drawn from your
 is provided.
 
 (Option 3) Fully from a config file
+--------------------------------------------------------------
 Example:
 $ btctxt.py ./btctxt.conf c
 
