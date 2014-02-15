@@ -1,4 +1,4 @@
-                        BTCtxt                        
+BTCtxt                        
 ===================================================== 
 
 BTCtxt monitors the price of BTC by grabbing the 
@@ -8,7 +8,7 @@ cellphones have a corresponding email address, BTCtxt
 can submit an smtp message as an sms message to your
 phone.
 
-                     Dependencies                     
+Dependencies                     
 ======================================================
 
 The only nonstandard library used in this application
@@ -18,7 +18,7 @@ entirity of this code is either a standard library or
 easily readable code. 
 
 
-                    Calling BTCtxt                    
+Calling BTCtxt                    
 ======================================================
 
 (Option 1) Fully from the commandline
