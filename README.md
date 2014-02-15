@@ -1,19 +1,15 @@
-BTCtxt                        
-===================================================== 
+#BTCtxt
 
 BTCtxt monitors the price of BTC by grabbing the current price from bitcoinity and sending an email alert when the price has changed significantly. Since cellphones have a corresponding email address, BTCtxt can submit an smtp message as an sms message to your phone.
 
-Dependencies                     
-======================================================
+#Dependencies                     
 
 The only nonstandard library used in this application is the BeautifulSoup module. In the next release, I'm going to try to remove this dependency so that the entirity of this code is either a standard library or easily readable code. 
 
 
-Calling BTCtxt                    
-======================================================
+#Calling BTCtxt
 
-(Option 1) Fully from the commandline
------------------------------------------------------
+##(Option 1) Fully from the commandline
 >Example: 
 >    $ btctxt.py ~/path/to/price username@gmail.com user pw smtp.server.com port 5551234567@cell.com .1 180
 
@@ -38,8 +34,7 @@ Calling BTCtxt
     
 12. Choose whether you wanted to monitor the last bid price (by providing "buy" as your argument) or the last ask price (by providing "sell" as your argument).
 
-(Option 2) Partly from a config file/ partly from commandline
--------------------------------------------------------------
+##(Option 2) Partly from a config file/ partly from commandline
 > Example:
 >    $ btctxt.py ./btctxt.conf
 >    Username: myUsername
@@ -54,8 +49,7 @@ This option is intended to be a compromise of convenience and security (i.e., no
 
 The rest of the information will either be drawn from your .conf file or be set to default values if no other value is provided.
 
-(Option 3) Fully from a config file
---------------------------------------------------------------
+##(Option 3) Fully from a config file
 > Example:
 >    $ btctxt.py ./btctxt.conf c
 
