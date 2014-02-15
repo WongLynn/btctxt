@@ -67,6 +67,7 @@ This option assumes you've added something like the following
 section to your .conf file.
 
 > [Credentials]
+>
 > user = myUsername
 >
 > pw = myPassword
