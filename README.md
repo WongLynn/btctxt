@@ -7,7 +7,7 @@ BTCtxt monitors the price of BTC by grabbing the current price from bitcoinavera
 ##(Option 1) Fully from the commandline
 >Example: 
 >
->    $ btctxt.py ~/path/to/price username@gmail.com user pw smtp.server.com port 5551234567@cell.com .1 180
+>    $ btctxt.py ~/path/to/price username@gmail.com user pw smtp.server.com port 5551234567@cell.com .1 180 currency
 
 ###Arguments
 1. Provide a path to a valid directory in which you'd like to store a blank file. If a file does not exist, BTCtxt will create a fill with value 1. This guarantees you'll receive a txt the first time BTCtxt successfully runs.
@@ -19,13 +19,13 @@ BTCtxt monitors the price of BTC by grabbing the current price from bitcoinavera
 7. The email address you wish to send your alert to. For verizon it is [9digitnumber]@vtext.com
 8. The proportional change in price you'd wish to be notified at. 0.1 implies BTCtxt will view a 10% change in price as an alert worthy event.
 9. The amount of time (in seconds) BTCtxt should wait between checking the price. 180 implies 180 seconds between checks.
-11. The currency you want to monitor.
+10. The currency you wish to monitor.
     
-    These values will be substituted into the string concatanation:
+    This value will be substituted into the string concatanation:
     
     "https://api.bitcoinaverage.com/ticker/global/" + currency + "/last"
     
-     So, be sure to verify you are producing a valid URL using your provided arguments by visiting the site beforehand.
+     So, be sure to verify you are producing a valid URL by visiting the site beforehand.
 
 ##(Option 2) Partly from a config file/ partly from commandline
 > Example:
