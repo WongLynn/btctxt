@@ -6,36 +6,33 @@ import os
 import getpass
 import ConfigParser
 import urllib2
-from BeautifulSoup import BeautifulSoup
 import time
 from email.mime.text import MIMEText
 import smtplib
 
 
-def main(path, from_address, user, pw, smtp, port, to_address, ratio, exchange, currency, buy_sell):
+def main(path, from_address, user, pw, smtp, port, to_address, ratio, currency):
         #get current price
-        web = urllib2.urlopen("http://bitcoinity.org/markets/" + exchange + "/" + currency).read()
-        soup = BeautifulSoup(''.join(web))
-        last = float(soup.find('span', id="last_" + buy_sell).string)
-        #check last price
+        last = float(urllib2.urlopen("https://api.bitcoinaverage.com/ticker/global/" + currency + "/last").read())
+        #compare current to log price
         checkLogExistence(path)
         logP = getLog(path)
         change = abs((logP-last)/last)
         if change > ratio:
-                notify(last, currency, exchange, path, from_address, user, pw, smtp, port, to_address)
+                notify(last, currency, path, from_address, user, pw, smtp, port, to_address)
         return None
 
 
-def notify(last, currency, exchange, path, from_address, user, pw, smtp, port, to_address):
-        sendEmail(last, currency, exchange, from_address, user, pw, smtp, port, to_address)
+def notify(last, currency, path, from_address, user, pw, smtp, port, to_address):
+        sendEmail(last, currency, from_address, user, pw, smtp, port, to_address)
         writeLog(last, path)
         return None
 
 
-def sendEmail(last, currency, exchange, from_address, user, pw, smtp, port, to_address):
+def sendEmail(last, currency, from_address, user, pw, smtp, port, to_address):
         #Format email_content
         timestr = time.strftime("%H:%M", time.localtime())
-        email_content = "The price of BTC is currently " + str(last) + currency + " as of " + timestr + " on " + exchange + "."
+        email_content = "The price of BTC is currently " + str(last) + currency + " as of " + timestr + "."
         #Create msg
         msg = MIMEText(email_content)
         msg['Subject'] = "BTCtxt"
@@ -79,7 +76,7 @@ def getConf(path):
         parser = ConfigParser.RawConfigParser()
         parser.read(path)
         necessary = ["path", "smtp", "port", "to", "from"]
-        optional = ["exchange", "currency", "buy_sell", "sleeptime", "sleeptime"]
+        optional = ["currency", "sleeptime", "sleeptime"]
         #check necessary
         if len(set(parser.options("Necessary"))) == 5:
                 for item in necessary:
@@ -90,19 +87,14 @@ def getConf(path):
         #check optional
         if len(set(parser.options("Optional"))) <= 3:
                 for item in optional:
-                        if item not in parser.options("Optional"):
-                                if item is "exchange":
-                                        parser.set("Optional", item, "bitstamp")
-                                elif item is "currency":
+                                if item is "currency":
                                         parser.set("Optional", item, "USD")
-                                elif item is "buy_sell":
-                                        parser.set("Optional", item, "sell")
                                 elif item is "sleeptime":
                                         parser.set("Optional", item, "180")
                                 else:
                                         parser.set("Optional", item, "0.075")
         else:
-                print "You've provided too many parameters in the [Optional] section of your .conf . Please include any subset of the following: exchange (bitstamp), sleeptime (180), ratio (0.075). If any argument is not included, the paranthetical default value will be used."
+                print "You've provided too many parameters in the [Optional] section of your .conf . Please include any subset of the following: currency (USD),  sleeptime (180), ratio (0.075). If any argument is not included, the paranthetical default value will be used."
         return parser
 
 if len(sys.argv) == 2:
@@ -115,9 +107,7 @@ if len(sys.argv) == 2:
         to_address = parser.get("Necessary", "to")
         ratio = float(parser.get("Optional", "ratio"))
         sleepTime = float(parser.get("Optional", "sleeptime"))
-        exchange = parser.get("Optional", "exchange")
         currency = parser.get("Optional", "currency")
-        buy_sell = parser.get("Optional", "buy_sell")
         #get user and pw from stdin
         user = raw_input("Username: ")
         pw = getpass.getpass()
@@ -131,9 +121,7 @@ elif len(sys.argv) == 3 and sys.argv[2] is "c":
         to_address = parser.get("Necessary", "to")
         ratio = float(parser.get("Optional", "ratio"))
         sleepTime = float(parser.get("Optional", "sleeptime"))
-        exchange = parser.get("Optional", "exchange")
         currency = parser.get("Optional", "currency")
-        buy_sell = parser.get("Optional", "buy_sell")
         user = parser.get("Credentials", "user")
         pw = parser.get("Credentials", "pw")
 else:
@@ -147,9 +135,7 @@ else:
         to_address = sys.argv[7]
         ratio = float(sys.argv[8])
         sleepTime = float(sys.argv[9])
-        exchange = sys.argv[10]
-        currency = sys.argv[11]
-        buy_sell = sys.argv[12]
+        currency = sys.argv[10]
 while True:
-        main(path, from_address, user, pw, smtp, port, to_address, ratio, exchange, currency, buy_sell)
+        main(path, from_address, user, pw, smtp, port, to_address, ratio, currency)
         time.sleep(sleepTime)
