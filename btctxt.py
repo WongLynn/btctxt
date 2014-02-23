@@ -3,139 +3,124 @@
 #import libraries
 import sys
 import os
-import getpass
+import time
 import ConfigParser
 import urllib2
-import time
-from email.mime.text import MIMEText
 import smtplib
+import getpass
+from email.mime.text import MIMEText
 
 
-def main(path, from_address, user, pw, smtp, port, to_address, ratio, currency):
-        #get current price
-        last = float(urllib2.urlopen("https://api.bitcoinaverage.com/ticker/global/" + currency + "/last").read())
-        #compare current to log price
-        checkLogExistence(path)
-        logP = getLog(path)
-        change = abs((logP-last)/last)
-        if change > ratio:
-                notify(last, currency, path, from_address, user, pw, smtp, port, to_address)
-        return None
+class BTCtxt:
+        def __init__(self):
+                self.last=1
+                self.from_address=""
+                self.smtp=""
+                self.port=""
+                self.to_address=""
+                self.user=""
+                self.pw=""
+                self.ratio=[]
+                self.sleeptime=[]
+                self.currency=""
+                return None
 
 
-def notify(last, currency, path, from_address, user, pw, smtp, port, to_address):
-        sendEmail(last, currency, from_address, user, pw, smtp, port, to_address)
-        writeLog(last, path)
-        return None
+        def monitor(self):
+                #get current price
+                current = float(urllib2.urlopen("https://api.bitcoinaverage.com/ticker/global/" + btctxt.currency + "/last").read())
+                #compare current to log price
+                change = abs((btctxt.last-current)/current)
+                if change > btctxt.ratio:
+                        btctxt.sendEmail(current)
+                        btctxt.last=current
+                return self
 
 
-def sendEmail(last, currency, from_address, user, pw, smtp, port, to_address):
-        #Format email_content
-        timestr = time.strftime("%H:%M", time.localtime())
-        email_content = "The price of BTC is currently " + str(last) + currency + " as of " + timestr + "."
-        #Create msg
-        msg = MIMEText(email_content)
-        msg['Subject'] = "BTCtxt"
-        msg['To'] = to_address
-        msg['From'] = from_address
-        #start server
-        server = smtplib.SMTP(smtp + ":" + port)
-        server.ehlo()
-        server.starttls()
-        #login
-        server.login(user, pw)
-        #send msg
-        server.sendmail(from_address, [to_address], msg.as_string())
-        server.quit
-        return None
-
-
-def writeLog(last, path):
-        f = open(path, 'w')
-        f.write(str(last))
-        f.close()
-        return None
-
-
-def getLog(path):
-        f = open(path, 'r')
-        price = float(f.read())
-        f.close()
-        return price
-
-
-def checkLogExistence(path):
-        if not os.path.exists(path):
-                f = file(path, 'w')
-                f.write("1")
-                f.close()
-        return None
+        def sendEmail(self, current):
+                #Format email_content
+                timestr = time.strftime("%H:%M", time.localtime())
+                email_content = "The price of BTC is currently " + str(current) + self.currency + " as of " + timestr + "."
+                #Create msg
+                msg = MIMEText(email_content)
+                msg['Subject'] = "BTCtxt"
+                msg['To'] = self.to_address
+                msg['From'] = self.from_address
+                #start server
+                server = smtplib.SMTP(self.smtp + ":" + self.port)
+                server.ehlo()
+                server.starttls()
+                #login
+                server.login(self.user, self.pw)
+                #send msg
+                server.sendmail(self.from_address, [self.to_address], msg.as_string())
+                server.quit
+                return None
 
 
 def getConf(path):
         parser = ConfigParser.RawConfigParser()
         parser.read(path)
-        necessary = ["path", "smtp", "port", "to", "from"]
-        optional = ["currency", "sleeptime", "sleeptime"]
+        necessary = ["smtp", "port", "to", "from"]
+        optional = ["currency", "sleeptime", "ratio"]
         #check necessary
-        if len(set(parser.options("Necessary"))) == 5:
-                for item in necessary:
-                        if item not in parser.options("Necessary"):
-                                return False
-        else:
-                print "You've provided too many parameters in the [Necessary] section. Please include an entry for all of the following: path, smtp, port, to, from."
+        for item in necessary:
+                if item not in parser.options("Necessary"):
+                        print "Please include a " + item + " entry in the [Necessary] section."
+                        return False
         #check optional
-        if len(set(parser.options("Optional"))) <= 3:
-                for item in optional:
-                                if item is "currency":
-                                        parser.set("Optional", item, "USD")
-                                elif item is "sleeptime":
-                                        parser.set("Optional", item, "180")
-                                else:
-                                        parser.set("Optional", item, "0.075")
-        else:
-                print "You've provided too many parameters in the [Optional] section of your .conf . Please include any subset of the following: currency (USD),  sleeptime (180), ratio (0.075). If any argument is not included, the paranthetical default value will be used."
+        for item in optional:
+                if item is "currency":
+                        parser.set("Optional", item, "USD")
+                elif item is "sleeptime":
+                        parser.set("Optional", item, "180")
+                elif item is "ratio":
+                        parser.set("Optional", item, "0.075")          
         return parser
 
-if len(sys.argv) == 2:
-        #read .conf
-        parser = getConf(sys.argv[1])
-        path = os.path.expanduser(parser.get("Necessary", "path"))
-        from_address = parser.get("Necessary", "from")
-        smtp = parser.get("Necessary", "smtp")
-        port = parser.get("Necessary", "port")
-        to_address = parser.get("Necessary", "to")
-        ratio = float(parser.get("Optional", "ratio"))
-        sleepTime = float(parser.get("Optional", "sleeptime"))
-        currency = parser.get("Optional", "currency")
-        #get user and pw from stdin
-        user = raw_input("Username: ")
-        pw = getpass.getpass()
-elif len(sys.argv) == 3 and sys.argv[2] is "c":
-        #read .conf
-        parser = getConf(sys.argv[1])
-        path = os.path.expanduser(parser.get("Necessary", "path"))
-        from_address = parser.get("Necessary", "from")
-        smtp = parser.get("Necessary", "smtp")
-        port = parser.get("Necessary", "port")
-        to_address = parser.get("Necessary", "to")
-        ratio = float(parser.get("Optional", "ratio"))
-        sleepTime = float(parser.get("Optional", "sleeptime"))
-        currency = parser.get("Optional", "currency")
-        user = parser.get("Credentials", "user")
-        pw = parser.get("Credentials", "pw")
-else:
-        #read stdin
-        path = sys.argv[1]
-        from_address = sys.argv[2]
-        user = sys.argv[3]
-        pw = sys.argv[4]
-        smtp = sys.argv[5]
-        port = sys.argv[6]
-        to_address = sys.argv[7]
-        ratio = float(sys.argv[8])
-        sleepTime = float(sys.argv[9])
-        currency = sys.argv[10]
-while True:
-        main(path, from_address, user, pw, smtp, port, to_address, ratio, currency)
-        time.sleep(sleepTime)
+
+if __name__ == '__main__':
+        #Create instance of btctxt class
+        btctxt=BTCtxt()
+        #Populate btctxt attributes using one of three input methods
+        if len(sys.argv) == 2: #if only path to .conf file provided 
+                #read .conf
+                parser = getConf(sys.argv[1])
+                #write .conf to btctxt
+                btctxt.from_address = parser.get("Necessary", "from")
+                btctxt.smtp = parser.get("Necessary", "smtp")
+                btctxt.port = parser.get("Necessary", "port")
+                btctxt.to_address = parser.get("Necessary", "to")
+                btctxt.ratio = float(parser.get("Optional", "ratio"))
+                btctxt.sleepTime = float(parser.get("Optional", "sleeptime"))
+                btctxt.currency = parser.get("Optional", "currency")
+                #get user and pw from std in
+                btctxt.user = raw_input("Username: ")
+                btctxt.pw = getpass.getpass()
+        elif len(sys.argv) == 3 and sys.argv[2] is "c": #if path to .conf file and letter c provided as second argument
+                #read .conf
+                parser = getConf(sys.argv[1])
+                #write .conf to btctxt
+                btctxt.from_address = parser.get("Necessary", "from")
+                btctxt.smtp = parser.get("Necessary", "smtp")
+                btctxt.port = parser.get("Necessary", "port")
+                btctxt.to_address = parser.get("Necessary", "to")
+                btctxt.ratio = float(parser.get("Optional", "ratio"))
+                btctxt.sleepTime = float(parser.get("Optional", "sleeptime"))
+                btctxt.currency = parser.get("Optional", "currency")
+                btctxt.user = parser.get("Credentials", "user")
+                btctxt.pw = parser.get("Credentials", "pw")
+        else:
+                #read stdin
+                btctxt.from_address = sys.argv[1]
+                btctxt.smtp = sys.argv[2]
+                btctxt.port = sys.argv[3]
+                btctxt.to_address = sys.argv[4]
+                btctxt.user = sys.argv[5]
+                btctxt.pw = sys.argv[6]
+                btctxt.ratio = float(sys.argv[7])
+                btctxt.sleepTime = float(sys.argv[8])
+                btctxt.currency = sys.argv[9]
+        while True:
+                btctxt.monitor()
+                time.sleep(btctxt.sleepTime)
