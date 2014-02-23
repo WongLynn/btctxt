@@ -26,22 +26,20 @@ class BTCtxt:
                 return None
 
         def monitor(self):
-                url="https://api.bitcoinaverage.com/ticker/global/" + btctxt.currency + "/last"
+                url = "https://api.bitcoinaverage.com/ticker/global/" + btctxt.currency + "/last"
                 #get current price
                 try:
                         current = float(urllib2.urlopen(url).read())
+                        #compare current to log price
+                        change = abs((btctxt.last-current)/current)
+                        if change > btctxt.ratio:
+                                interrupt = btctxt.sendEmail(current)
+                                if not interrupt:
+                                        btctxt.last = current
                 except(urllib2.HTTPError):
                         print "Failed to pull price from: " + url
-                        return self, True
-                #compare current to log price
-                change = abs((btctxt.last-current)/current)
-                if change > btctxt.ratio:
-                        interrupt=btctxt.sendEmail(current)
-                        if not interrupt:
-                                btctxt.last = current
-                                return self, False
-                        else:
-                                return self, True
+                        interrupt = True;
+                return self, interrupt
 
         def sendEmail(self, current):
                 #Format email_content
@@ -59,13 +57,14 @@ class BTCtxt:
                 #login
                 try:
                         server.login(self.user, self.pw)
+                        #send msg
+                        server.sendmail(self.from_address, [self.to_address], msg.as_string())
+                        server.quit()
+                        interrupt = False
                 except(smtplib.SMTPAuthenticationError):
                         print "Could not log in to SMTP server using provided credentials. Please verify these credentials and try again."
-                        return True
-                #send msg
-                server.sendmail(self.from_address, [self.to_address], msg.as_string())
-                server.quit()
-                return False
+                        interrupt = True;
+                return interrupt
 
 
 def getConf(path):
