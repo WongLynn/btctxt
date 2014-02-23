@@ -38,7 +38,7 @@ class BTCtxt:
                                         btctxt.last = current
                 except(urllib2.HTTPError):
                         print "Failed to pull price from: " + url
-                        interrupt = True;
+                        interrupt = True
                 return self, interrupt
 
         def sendEmail(self, current):
@@ -63,7 +63,7 @@ class BTCtxt:
                         interrupt = False
                 except(smtplib.SMTPAuthenticationError):
                         print "Could not log in to SMTP server using provided credentials. Please verify these credentials and try again."
-                        interrupt = True;
+                        interrupt = True
                 return interrupt
 
 
@@ -72,56 +72,61 @@ def getConf(path):
         parser.read(path)
         necessary = ["smtp", "port", "to", "from"]
         optional = ["currency", "sleeptime", "ratio"]
+        interrupt = False
         #check necessary
         for item in necessary:
                 if item not in parser.options("Necessary"):
                         print "Please include a " + item + " entry in the [Necessary] section."
-                        return False
+                        interrupt = True
         #check optional
-        for item in optional:
-                if item not in parser.options("Optional"):
-                        if item is "currency":
-                                parser.set("Optional", item, "USD")
-                        elif item is "sleeptime":
-                                parser.set("Optional", item, "180")
-                        elif item is "ratio":
-                                parser.set("Optional", item, "0.075")
-        return parser
+        if not interrupt:
+                for item in optional:
+                        if item not in parser.options("Optional"):
+                                if item is "currency":
+                                        parser.set("Optional", item, "USD")
+                                elif item is "sleeptime":
+                                        parser.set("Optional", item, "180")
+                                elif item is "ratio":
+                                        parser.set("Optional", item, "0.075")
+        return parser, interrupt
 
 
 if __name__ == '__main__':
+        interrupt = False
         #Create instance of btctxt class
         btctxt = BTCtxt()
         #Populate btctxt attributes using one of three input methods
         if len(sys.argv) == 2:
         #if only path to .conf file provided
                 #read .conf
-                parser = getConf(sys.argv[1])
-                #write .conf to btctxt
-                btctxt.from_address = parser.get("Necessary", "from")
-                btctxt.smtp = parser.get("Necessary", "smtp")
-                btctxt.port = parser.get("Necessary", "port")
-                btctxt.to_address = parser.get("Necessary", "to")
-                btctxt.ratio = float(parser.get("Optional", "ratio"))
-                btctxt.sleepTime = float(parser.get("Optional", "sleeptime"))
-                btctxt.currency = parser.get("Optional", "currency")
-                #get user and pw from std in
-                btctxt.user = raw_input("Username: ")
-                btctxt.pw = getpass.getpass()
+                parser, interrupt = getConf(sys.argv[1])
+                if not interrupt:
+                        #write .conf to btctxt
+                        btctxt.from_address = parser.get("Necessary", "from")
+                        btctxt.smtp = parser.get("Necessary", "smtp")
+                        btctxt.port = parser.get("Necessary", "port")
+                        btctxt.to_address = parser.get("Necessary", "to")
+                        btctxt.ratio = float(parser.get("Optional", "ratio"))
+                        btctxt.sleepTime = float(parser.get("Optional", "sleeptime"))
+                        btctxt.currency = parser.get("Optional", "currency")
+                        #get user and pw from std in
+                        btctxt.user = raw_input("Username: ")
+                        btctxt.pw = getpass.getpass()
         elif len(sys.argv) == 3 and sys.argv[2] is "c":
         #if path to .conf file and letter c provided as second argument
                 #read .conf
-                parser = getConf(sys.argv[1])
-                #write .conf to btctxt
-                btctxt.from_address = parser.get("Necessary", "from")
-                btctxt.smtp = parser.get("Necessary", "smtp")
-                btctxt.port = parser.get("Necessary", "port")
-                btctxt.to_address = parser.get("Necessary", "to")
-                btctxt.ratio = float(parser.get("Optional", "ratio"))
-                btctxt.sleepTime = float(parser.get("Optional", "sleeptime"))
-                btctxt.currency = parser.get("Optional", "currency")
-                btctxt.user = parser.get("Credentials", "user")
-                btctxt.pw = parser.get("Credentials", "pw")
+                parser, interrupt = getConf(sys.argv[1])
+                if not interrupt:
+                        #write .conf to btctxt
+                        btctxt.from_address = parser.get("Necessary", "from")
+                        btctxt.smtp = parser.get("Necessary", "smtp")
+                        btctxt.port = parser.get("Necessary", "port")
+                        btctxt.to_address = parser.get("Necessary", "to")
+                        btctxt.ratio = float(parser.get("Optional", "ratio"))
+                        btctxt.sleepTime = float(parser.get("Optional", "sleeptime"))
+                        btctxt.currency = parser.get("Optional", "currency")
+                        btctxt.user = parser.get("Credentials", "user")
+                        btctxt.pw = parser.get("Credentials", "pw")
         else:
                 #read stdin
                 btctxt.from_address = sys.argv[1]
@@ -133,7 +138,6 @@ if __name__ == '__main__':
                 btctxt.ratio = float(sys.argv[7])
                 btctxt.sleepTime = float(sys.argv[8])
                 btctxt.currency = sys.argv[9]
-        interrupt=False
         while not interrupt:
                 btctxt, interrupt = btctxt.monitor()
                 if interrupt:
