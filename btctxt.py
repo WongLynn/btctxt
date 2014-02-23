@@ -54,7 +54,7 @@ class BTCtxt:
                 server.login(self.user, self.pw)
                 #send msg
                 server.sendmail(self.from_address, [self.to_address], msg.as_string())
-                server.quit
+                server.quit()
                 return None
 
 
