@@ -43,8 +43,10 @@ This option is intended to be a compromise of convenience and security (i.e., no
 
 ###Arguments
 1. Path to your .conf file. See example.conf for details 
-2. Enter your email username (received as python raw_input())
-3. Enter your email password (received as python getpass.getpass())
+
+###Inputs after initial call to BTCtxt
+1. Enter your email username (received as python raw_input())
+2. Enter your email password (received as python getpass.getpass())
 
 The rest of the information will either be drawn from your .conf file or be set to default values if no value is provided.
 
