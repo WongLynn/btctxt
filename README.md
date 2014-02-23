@@ -73,3 +73,9 @@ section to your .conf file.
 Just to be clear here: if you decide to go with option 3, 
 you're deciding to keep your credentials in plain text
 on your pc at your own risk.
+
+#Donations
+If you're feeling generous, feel free to donate to:
+
+1BTCtxt75EQkvi1MnbKSiTTcXxQpnvkSUe
+
