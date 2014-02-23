@@ -26,14 +26,22 @@ class BTCtxt:
                 return None
 
         def monitor(self):
+                url="https://api.bitcoinaverage.com/ticker/global/" + btctxt.currency + "/last"
                 #get current price
-                current = float(urllib2.urlopen("https://api.bitcoinaverage.com/ticker/global/" + btctxt.currency + "/last").read())
+                try:
+                        current = float(urllib2.urlopen(url).read())
+                except(urllib2.HTTPError):
+                        print "Failed to pull price from: " + url
+                        return self, True
                 #compare current to log price
                 change = abs((btctxt.last-current)/current)
                 if change > btctxt.ratio:
-                        btctxt.sendEmail(current)
-                        btctxt.last = current
-                return self
+                        interrupt=btctxt.sendEmail(current)
+                        if not interrupt:
+                                btctxt.last = current
+                                return self, False
+                        else:
+                                return self, True
 
         def sendEmail(self, current):
                 #Format email_content
@@ -49,11 +57,15 @@ class BTCtxt:
                 server.ehlo()
                 server.starttls()
                 #login
-                server.login(self.user, self.pw)
+                try:
+                        server.login(self.user, self.pw)
+                except(smtplib.SMTPAuthenticationError):
+                        print "Could not log in to SMTP server using provided credentials. Please verify these credentials and try again."
+                        return True
                 #send msg
                 server.sendmail(self.from_address, [self.to_address], msg.as_string())
                 server.quit()
-                return None
+                return False
 
 
 def getConf(path):
@@ -68,12 +80,13 @@ def getConf(path):
                         return False
         #check optional
         for item in optional:
-                if item is "currency":
-                        parser.set("Optional", item, "USD")
-                elif item is "sleeptime":
-                        parser.set("Optional", item, "180")
-                elif item is "ratio":
-                        parser.set("Optional", item, "0.075")
+                if item not in parser.options("Optional"):
+                        if item is "currency":
+                                parser.set("Optional", item, "USD")
+                        elif item is "sleeptime":
+                                parser.set("Optional", item, "180")
+                        elif item is "ratio":
+                                parser.set("Optional", item, "0.075")
         return parser
 
 
@@ -121,6 +134,9 @@ if __name__ == '__main__':
                 btctxt.ratio = float(sys.argv[7])
                 btctxt.sleepTime = float(sys.argv[8])
                 btctxt.currency = sys.argv[9]
-        while True:
-                btctxt.monitor()
+        interrupt=False
+        while not interrupt:
+                btctxt, interrupt = btctxt.monitor()
+                if interrupt:
+                        break
                 time.sleep(btctxt.sleepTime)
