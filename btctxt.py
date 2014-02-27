@@ -12,17 +12,21 @@ from socket import gaierror
 from socket import error as socketerror
 from email.mime.text import MIMEText
 
+
 class BTCtxtError(Exception):
         def __init__(self, message, cause):
                 super(BTCtxtError, self).__init__('{}, caused by {}'.format(message, repr(cause)))
                 self.cause = cause
-                
+
+
 class UnknownError(Exception):
         def __init__(self, message):
                 super(UnknownError, self).__init__('{}, caused by {}'.format(message, repr(sys.exc_info()[1])))
-                
+
+
 class ParserError(Exception):
         pass
+
 
 class BTCtxt:
         def __init__(self):
