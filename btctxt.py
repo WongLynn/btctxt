@@ -56,8 +56,7 @@ class BTCtxt:
                 except smtplib.SMTPAuthenticationError as e:
                     raise BTCtxtError('Email log-in failed', e)
                 except gaierror as e:
-                    raise BTCtxtError(
-                        'Invalid server {}'.format(self.smtp), e)
+                    raise BTCtxtError('Invalid server {}'.format(self.smtp), e)
                 except socketerror as e:
                     msg = "Invalid (server, port): "
                     raise BTCtxtError('{}({}, {})'.format(msg, self.smtp,
@@ -82,9 +81,8 @@ class BTCtxt:
     def _write_email(self, current):
         # Format email_content
         timestr = time.strftime("%H:%M", time.localtime())
-        email_content = ("{}/BTC: {} as of {}.").format(self.currency,
-                                                        current,
-                                                        timestr)
+        str_format = "{}/BTC: {} as of {}."
+        email_content = (str_format).format(self.currency, current, timestr)
         # Create msg
         msg = MIMEText(email_content)
         msg['Subject'] = "BTCtxt"
